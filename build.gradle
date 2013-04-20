@@ -19,8 +19,8 @@ sourceSets {
 
 dependencies {
     compile group: 'org.mvel', name: 'mvel2', version:'2.1.4.Final'
-    compile group: 'com.yammer.dropwizard', name: 'dropwizard-core', version: '0.6.2+'
-    compile group: 'com.yammer.dropwizard', name: 'dropwizard-auth', version: '0.6.2+'
+    provided group: 'com.yammer.dropwizard', name: 'dropwizard-core', version: '0.6.2+'
+    provided group: 'com.yammer.dropwizard', name: 'dropwizard-auth', version: '0.6.2+'
 }
 
 apply plugin: 'idea'

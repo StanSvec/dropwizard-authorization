@@ -20,7 +20,7 @@ public class ExampleVariableProvider implements MvelVariableProvider<com.stansve
     }
 
     @Override
-    public VariableResolverFactory createPerRequestVariables(com.stansvec.dropwizard.auth.example.ExampleAuthInfo res, HttpContext httpContext) {
+    public VariableResolverFactory createPerRequestVariables(ExampleAuthInfo res, HttpContext httpContext) {
         return new MapVariableResolverFactory(
                 ImmutableMap.<String, Object>of(
                         "usr", res.getUser(),

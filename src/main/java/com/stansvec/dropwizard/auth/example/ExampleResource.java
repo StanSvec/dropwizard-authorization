@@ -9,6 +9,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 @Path("/auth/example")
 @Produces(MediaType.TEXT_PLAIN)
@@ -16,13 +17,13 @@ public class ExampleResource {
 
     @GET
     @Path("/exp/success")
-    public String exp(@Auth(check = "roles('role1') and user('stansvec')") com.stansvec.dropwizard.auth.example.ExampleAuthInfo info) {
+    public String exp(@Auth(check = "roles('role1') and user('stansvec')") ExampleAuthInfo info) {
         return "authorized";
     }
 
     @GET
     @Path("/manual/success")
-    public String manual(@Auth com.stansvec.dropwizard.auth.example.ExampleAuthInfo info) {
+    public String manual(@Auth ExampleAuthInfo info) {
         if (!info.getRoles().contains("role1") || !"stansvec".equals(info.getUser())) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
@@ -32,19 +33,19 @@ public class ExampleResource {
 
     @GET
     @Path("/exp/unauthorized")
-    public String expUnauthorized(@Auth(check = "groups('admin')") com.stansvec.dropwizard.auth.example.ExampleAuthInfo info) {
+    public String expUnauthorized(@Auth(check = "groups('admin')") ExampleAuthInfo info) {
         return "authorized";
     }
 
     @GET
     @Path("/exp/user/{user}/profile")
-    public String expProfileOwnerOnly(@Auth(check = "owner()") com.stansvec.dropwizard.auth.example.ExampleAuthInfo info) {
+    public String expProfileOwnerOnly(@Auth(check = "owner()") ExampleAuthInfo info) {
         return "user profile";
     }
 
     @GET
     @Path("/manual/user/{user}/profile")
-    public String manualProfileOwnerOnly(@Auth com.stansvec.dropwizard.auth.example.ExampleAuthInfo info, @Context javax.ws.rs.core.UriInfo uriInfo) {
+    public String manualProfileOwnerOnly(@Auth ExampleAuthInfo info, @Context UriInfo uriInfo) {
         if (!uriInfo.getPath().matches(String.format(".*user/%s($|/.*)", info.getUser()))) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
