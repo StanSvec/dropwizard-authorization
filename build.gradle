@@ -1,0 +1,30 @@
+apply plugin: 'java'
+
+group = 'cz.stansvec'
+version = '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    provided
+}
+
+sourceSets {
+    main.compileClasspath += configurations.provided
+    test.compileClasspath += configurations.provided
+    test.runtimeClasspath += configurations.provided
+}
+
+dependencies {
+    compile group: 'org.mvel', name: 'mvel2', version:'2.1.4.Final'
+    compile group: 'com.yammer.dropwizard', name: 'dropwizard-core', version: '0.6.2+'
+    compile group: 'com.yammer.dropwizard', name: 'dropwizard-auth', version: '0.6.2+'
+}
+
+apply plugin: 'idea'
+
+idea.module {
+    scopes.PROVIDED.plus += configurations.provided
+}
