@@ -1,7 +1,6 @@
 apply plugin: 'java'
 
 group = 'com.stansvec'
-name = 'dropwizard-authorization'
 version = '0.1'
 
 repositories {
