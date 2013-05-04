@@ -7,7 +7,7 @@ import org.mvel2.MVEL;
 import org.mvel2.integration.VariableResolverFactory;
 import org.mvel2.integration.impl.MapVariableResolverFactory;
 
-public class ExampleVariableProvider implements MvelVariableProvider<com.stansvec.dropwizard.auth.example.ExampleAuthInfo> {
+public class ExampleVariableProvider implements MvelVariableProvider<ExampleAuthInfo> {
 
     @Override
     public VariableResolverFactory createCommonVariables() {

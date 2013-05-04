@@ -1,6 +1,7 @@
 apply plugin: 'java'
 
-group = 'cz.stansvec'
+group = 'com.stansvec'
+name = 'dropwizard-authorization'
 version = '0.1'
 
 repositories {
@@ -14,7 +15,6 @@ configurations {
 sourceSets {
     main.compileClasspath += configurations.provided
     test.compileClasspath += configurations.provided
-    test.runtimeClasspath += configurations.provided
 }
 
 dependencies {
