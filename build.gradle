@@ -2,6 +2,8 @@ apply plugin: 'java'
 
 group = 'com.stansvec'
 version = '0.1'
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
 
 repositories {
     mavenCentral()
@@ -26,4 +28,36 @@ apply plugin: 'idea'
 
 idea.module {
     scopes.PROVIDED.plus += configurations.provided
+}
+
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier 'sources'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourceJar {
+                classifier 'sources'
+            }
+            pom.withXml {
+                def i = asString().indexOf('runtime')
+                asString().replace(i, i + 7, 'compile')
+            }
+            // dependency groupId: "org.mvel", artifactId: "mvel2", version: "2.1.4.Final", scope: "compile"
+        }
+    }
+    repositories {
+        maven {
+            url 'https://api.bintray.com/maven/stansvec/maven/dropwizard-authorization'
+            credentials {
+                username 'stansvec'
+                password 'Insert API key here'
+            }
+        }
+    }
 }

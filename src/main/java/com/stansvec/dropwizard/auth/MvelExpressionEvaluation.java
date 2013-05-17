@@ -19,13 +19,13 @@ public class MvelExpressionEvaluation<R> implements Evaluation<R> {
 
     private static final String ALWAYS_TRUE_EXP = "";
 
-    private final MvelVariableProvider variableProvider;
+    private final MvelVariableProvider<R> variableProvider;
 
     private final VariableResolverFactory commonVariables;
 
     private final ConcurrentMap<String, Serializable> expressionCache;
 
-    public MvelExpressionEvaluation(MvelVariableProvider variableProvider) {
+    public MvelExpressionEvaluation(MvelVariableProvider<R> variableProvider) {
         this.variableProvider = variableProvider;
         this.commonVariables = variableProvider.createCommonVariables();
         this.expressionCache = new ConcurrentHashMap<String, Serializable>();

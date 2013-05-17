@@ -39,7 +39,7 @@ public class ConditionalAuthProvider<T> implements InjectableProvider<Auth, Para
 
     @Override
     public Injectable getInjectable(ComponentContext ic, final Auth auth, Parameter parameter) {
-        return new ConditionalAuthInjectable(
+        return new ConditionalAuthInjectable<T>(
                 evaluation, auth, (AbstractHttpContextInjectable) wrappedProvider.getInjectable(ic, new DropwizardAuth(auth.required()), parameter));
     }
 
