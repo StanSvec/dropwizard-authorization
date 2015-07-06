@@ -1,34 +1,39 @@
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
+
 apply plugin: 'java'
 
-group = 'com.stansvec'
-version = '0.1'
-sourceCompatibility = 1.5
-targetCompatibility = 1.5
+sourceCompatibility = 7
 
 repositories {
     mavenCentral()
 }
 
-configurations {
+/*configurations {
     provided
+    provided.extendsFrom(compile)
 }
 
 sourceSets {
     main.compileClasspath += configurations.provided
     test.compileClasspath += configurations.provided
-}
+    test.runtimeClasspath += configurations.provided
+}*/
 
 dependencies {
-    compile group: 'org.mvel', name: 'mvel2', version:'2.1.4.Final'
-    provided group: 'com.yammer.dropwizard', name: 'dropwizard-core', version: '0.6.2+'
-    provided group: 'com.yammer.dropwizard', name: 'dropwizard-auth', version: '0.6.2+'
+    //compile group: 'org.mvel', name: 'mvel2', version:'2.1.4.Final'
+    compile group: 'io.dropwizard', name: 'dropwizard-core', version: '0.8.1'
+    compile group: 'io.dropwizard', name: 'dropwizard-auth', version: '0.8.1'
 }
 
-apply plugin: 'idea'
+/*apply plugin: 'idea'
 
-idea.module {
-    scopes.PROVIDED.plus += configurations.provided
-}
+idea {
+  module {
+    scopes.PROVIDED.plus += [project.configurations.provided]
+  }
+}*/
 
 apply plugin: 'maven-publish'
 
@@ -40,15 +45,12 @@ task sourceJar(type: Jar) {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            group = 'com.stansvec'
+            version = '0.2-SNAPSHOT'
             from components.java
             artifact sourceJar {
                 classifier 'sources'
             }
-            pom.withXml {
-                def i = asString().indexOf('runtime')
-                asString().replace(i, i + 7, 'compile')
-            }
-            // dependency groupId: "org.mvel", artifactId: "mvel2", version: "2.1.4.Final", scope: "compile"
         }
     }
     repositories {
