@@ -17,8 +17,12 @@ public class Authorization<P> {
     private final UnauthorizedHandler unauthorizedHandler;
 
     public Authorization(ClassToInstanceMap<Role<P>> roles, UnauthorizedHandler unauthorizedHandler) {
-        this.allRoles = ImmutableClassToInstanceMap.<Role<P>>builder().putAll(roles).build();
+        this.allRoles = ImmutableClassToInstanceMap.<Role<P>>builder().put(NullRole.class, new NullRole<>()).putAll(roles).build();
         this.unauthorizedHandler = unauthorizedHandler;
+    }
+
+    public boolean containRole(Class<? extends Role> role) {
+        return allRoles.containsKey(role);
     }
 
     public void authorize(Auth auth, P principal, ContainerRequestContext ctx) {
@@ -27,9 +31,9 @@ public class Authorization<P> {
         }
     }
 
-    private boolean checkRoles(Class<? extends Role<?>>[] roles, P principal, ContainerRequestContext ctx, boolean any) {
+    private boolean checkRoles(Class<? extends Role>[] roles, P principal, ContainerRequestContext ctx, boolean any) {
         boolean authorized = false;
-        for (Class<? extends Role<?>> r : roles) {
+        for (Class<? extends Role> r : roles) {
             if (allRoles.get(r).hasRole(principal, ctx)) {
                 authorized = true;
                 if (any) {

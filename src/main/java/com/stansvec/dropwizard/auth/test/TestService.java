@@ -1,7 +1,7 @@
 package com.stansvec.dropwizard.auth.test;
 
 import com.google.common.base.Optional;
-import com.stansvec.dropwizard.auth.Authorization;
+import com.stansvec.dropwizard.auth.AuthPolicy;
 import com.stansvec.dropwizard.auth.AuthorizationConfiguration;
 import io.dropwizard.Application;
 import io.dropwizard.auth.AuthenticationException;
@@ -21,12 +21,17 @@ public class TestService extends Application<TestConfig> {
 
     @Override
     public void run(TestConfig configuration, Environment environment) throws Exception {
+        AuthorizationConfiguration<BasicCredentials, User> ac = new AuthorizationConfiguration.Builder<User>()
+                .setAuthPolicy(AuthPolicy.PROTECT_ANNOTATED_ONLY)
+                .addRole(new Owner())
+                .setAuthentication(new BasicAuthFactory<>(new Authenticator<BasicCredentials, User>() {
+                    @Override
+                    public Optional<User> authenticate(BasicCredentials credentials) throws AuthenticationException {
+                        return Optional.of(new User("Ljflj"));
+                    }
+                }, "realm", User.class))
+                .build();
         environment.jersey().register(new TestResource());
-        environment.jersey().register(new AuthorizationConfiguration(new BasicAuthFactory(new Authenticator<BasicCredentials, User>() {
-            @Override
-            public Optional<User> authenticate(BasicCredentials credentials) throws AuthenticationException {
-                return Optional.of(new User("Ljflj"));
-            }
-        }, "realm", User.class), new Authorization(null, null)));
+        environment.jersey().register(ac);
     }
 }

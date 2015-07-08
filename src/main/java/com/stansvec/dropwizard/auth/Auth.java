@@ -12,16 +12,16 @@ import java.lang.annotation.Target;
  * @author Stan Svec
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.PARAMETER})
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER})
 public @interface Auth {
 
     String NO_EXP = "";
 
-    Class<? extends Role<?>> NO_ROLE = NullRole.class;
+    Class<? extends Role> NO_ROLE = NullRole.class;
 
-    Class<? extends Role<?>>[] roles() default NullRole.class;
+    Class<? extends Role>[] roles() default NullRole.class;
 
-    Class<? extends Role<?>>[] anyRole() default NullRole.class;
+    Class<? extends Role>[] anyRole() default NullRole.class;
 
     String exp() default NO_EXP;
 
