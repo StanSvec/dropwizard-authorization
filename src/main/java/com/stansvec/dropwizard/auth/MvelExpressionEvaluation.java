@@ -24,17 +24,17 @@ public class MvelExpressionEvaluation<R> {
     }
 */
     public boolean evaluate(R res, Auth auth/*, HttpContext httpContext*/) {
-        if (ALWAYS_TRUE_EXP.equals(auth.exp())) {
+        if (ALWAYS_TRUE_EXP.equals(auth.check())) {
             return true;
         }
         /*VariableResolverFactory vars = variableProvider.createPerRequestVariables(res, httpContext);
         vars.setNextFactory(commonVariables);
-        Serializable exp = expressionCache.get(auth.exp());
-        if (exp == null) {
-            exp = MVEL.compileExpression(auth.exp());
-            expressionCache.put(auth.exp(), exp);
+        Serializable check = expressionCache.get(auth.check());
+        if (check == null) {
+            check = MVEL.compileExpression(auth.check());
+            expressionCache.put(auth.check(), check);
         }
-        return (Boolean) MVEL.executeExpression(exp, vars);*/
+        return (Boolean) MVEL.executeExpression(check, vars);*/
         return false;
     }
 }

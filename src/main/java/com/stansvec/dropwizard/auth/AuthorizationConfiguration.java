@@ -53,45 +53,43 @@ public class AuthorizationConfiguration<T, U> extends AbstractBinder implements 
                         .add(resInfo.getResourceClass())
                         .add(resInfo.getResourceMethod())
                         .addAll(Arrays.asList(resInfo.getResourceMethod().getParameters()))
-                        .build());
+                        .build(), resInfo);
 
         if (auth == null) {
             if ((authPolicy == AuthPolicy.PROTECT_ALL) && !containsNoAuth(resInfo)) {
-                throw new InvalidAuthorizationConfigurationException(
-                        "Unprotected resource method found. Either allow unprotected methods with AuthPolicy.PROTECT_ANNOTATED_ONLY or use @NoAuth annotation. " +
-                                "Resource info: " + resInfo);
+                throw exc("Unprotected resource method found. Either allow unprotected methods with AuthPolicy.PROTECT_ANNOTATED_ONLY or use @NoAuth annotation", resInfo);
             }
         } else {
-            if (!Auth.NO_EXP.equals(auth.exp())) {
-                // TODO check expression engine
+            if (!Auth.NO_EXP.equals(auth.check())) { // TODO
+                throw exc("Expression engine must be set to use expression in @Auth annotation. Check method supportExpressions(..) on AuthorizationConfiguration.Builder", resInfo);
             }
-            checkRoles(auth);
+            checkRoles(auth, resInfo);
             context.register(new AuthorizationFilter(authorizationFactory, auth));
         }
     }
 
-    private static Auth resolveAuthAnnotation(List<AnnotatedElement> elements) {
+    private static Auth resolveAuthAnnotation(List<AnnotatedElement> elements, ResourceInfo resInfo) {
         Auth auth = null;
         boolean ignore = false;
         for (AnnotatedElement e : elements) {
             if (e.isAnnotationPresent(Auth.class)) {
                 if (ignore) {
-                    throw new InvalidAuthorizationConfigurationException("@Auth cannot be used if @NoAuth is used on higher level (target)");
+                    throw exc("@Auth cannot be used if @NoAuth is used on higher level (target)", resInfo);
                 }
                 if (auth != null) {
-                    throw new InvalidAuthorizationConfigurationException("@Auth annotation cannot be combined on different levels (targets)");
+                    throw exc("@Auth annotation cannot be combined on different levels (targets)", resInfo);
                 }
                 if (e.isAnnotationPresent(NoAuth.class)) {
-                    throw new InvalidAuthorizationConfigurationException("Both @Auth and @NoAuth cannot be combined on same level (target)");
+                    throw exc("Both @Auth and @NoAuth cannot be combined on same level (target)", resInfo);
                 }
                 auth = e.getAnnotation(Auth.class);
                 if (!auth.required()) {
                     if (Parameter.class.isAssignableFrom(e.getClass())) {
-                        if (!Auth.NO_ROLE.equals(auth.roles()) || !Auth.NO_ROLE.equals(auth.anyRole()) || !Auth.NO_EXP.equals(auth.exp())) {
-                            throw new InvalidAuthorizationConfigurationException("When authentication is optional then authorization cannot be set");
+                        if (!Arrays.equals(Auth.NO_ROLE, auth.roles()) || !Arrays.equals(Auth.NO_ROLE, auth.anyRole()) || !Auth.NO_EXP.equals(auth.check())) {
+                            throw exc("When authentication is optional then authorization cannot be set", resInfo);
                         }
                     } else {
-                        throw new InvalidAuthorizationConfigurationException("Optional authentication/authorization is allowed only on parameter level");
+                        throw exc("Optional authentication/authorization is allowed only on parameter level", resInfo);
                     }
                 }
             }
@@ -107,17 +105,21 @@ public class AuthorizationConfiguration<T, U> extends AbstractBinder implements 
         return resInfo.getResourceMethod().isAnnotationPresent(NoAuth.class) || resInfo.getResourceClass().isAnnotationPresent(NoAuth.class);
     }
 
-    private void checkRoles(Auth auth) {
-        checkRoles(auth.roles());
-        checkRoles(auth.anyRole());
+    private void checkRoles(Auth auth, ResourceInfo resInfo) {
+        checkRoles(auth.roles(), resInfo);
+        checkRoles(auth.anyRole(), resInfo);
     }
 
-    private void checkRoles(Class<? extends Role>[] roles) {
+    private void checkRoles(Class<? extends Role>[] roles, ResourceInfo resInfo) {
         for (Class<? extends Role> role : roles) {
             if (!authorization.containRole(role)) {
-                throw new InvalidAuthorizationConfigurationException("@Auth annotation contains unregistered role: " + role);
+                throw exc("@Auth annotation contains unregistered role: " + role, resInfo);
             }
         }
+    }
+
+    private static InvalidAuthorizationConfigurationException exc(String msg, ResourceInfo resInfo) {
+        return new InvalidAuthorizationConfigurationException(msg + ", resource info: " + resInfo);
     }
 
     @Override

@@ -3,6 +3,7 @@ task wrapper(type: Wrapper) {
 }
 
 apply plugin: 'java'
+apply plugin: 'groovy'
 
 sourceCompatibility = 7
 
@@ -23,8 +24,15 @@ sourceSets {
 
 dependencies {
     //compile group: 'org.mvel', name: 'mvel2', version:'2.1.4.Final'
-    compile group: 'io.dropwizard', name: 'dropwizard-core', version: '0.8.1'
-    compile group: 'io.dropwizard', name: 'dropwizard-auth', version: '0.8.1'
+    compile group: 'io.dropwizard', name: 'dropwizard-core', version: '0.8.2'
+    compile group: 'io.dropwizard', name: 'dropwizard-auth', version: '0.8.2'
+    testCompile group:'org.codehaus.groovy', name:'groovy-all', version:'2.4.3'
+    testCompile group:'org.spockframework', name:'spock-core', version:'1.0-groovy-2.4'
+    testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: '0.8.2'
+    testCompile (group: 'org.glassfish.jersey.test-framework.providers', name: 'jersey-test-framework-provider-grizzly2', version: '2.19') {
+        exclude group: 'javax.servlet', module: 'javax.servlet-api'
+        exclude group: 'junit', module: 'junit'
+    }
 }
 
 /*apply plugin: 'idea'

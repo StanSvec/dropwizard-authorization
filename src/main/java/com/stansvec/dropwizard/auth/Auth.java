@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation is used to inject authenticated principal objects into protected JAX-RS resource
- * methods when expression exp is evaluated to true.
+ * methods when expression check is evaluated to true.
  *
  * @author Stan Svec
  */
@@ -17,13 +17,14 @@ public @interface Auth {
 
     String NO_EXP = "";
 
-    Class<? extends Role> NO_ROLE = NullRole.class;
+    @SuppressWarnings("unchecked")
+    Class<? extends Role>[] NO_ROLE = new Class[]{NullRole.class};
 
     Class<? extends Role>[] roles() default NullRole.class;
 
     Class<? extends Role>[] anyRole() default NullRole.class;
 
-    String exp() default NO_EXP;
+    String check() default NO_EXP;
 
     boolean required() default true;
 }
