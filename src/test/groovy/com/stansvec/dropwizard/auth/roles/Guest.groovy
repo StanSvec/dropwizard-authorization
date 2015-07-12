@@ -12,6 +12,6 @@ class Guest implements Role<TestUser> {
 
     @Override
     public boolean hasRole(TestUser user, ContainerRequestContext ctx) {
-        return "guest".equals(user.name);
+        return user.hasRole(TestUser.Role.GUEST)
     }
 }

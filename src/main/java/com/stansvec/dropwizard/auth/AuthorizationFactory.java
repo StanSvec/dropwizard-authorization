@@ -53,9 +53,8 @@ public class AuthorizationFactory<C, P> extends AuthFactory<C, P> {
 
     @Override
     public P provide() {
-        ContainerRequestContext cr = (containerRequest != null) ? containerRequest : getContainerRequest();
         P principal = authFactory.provide();
-        authorization.authorize(auth, principal, cr);
+        authorization.authorize(auth, principal, (containerRequest != null) ? containerRequest : getContainerRequest());
         return principal;
     }
 }

@@ -26,7 +26,7 @@ public class Authorization<P> {
     }
 
     public void authorize(Auth auth, P principal, ContainerRequestContext ctx) {
-        if (!checkRoles(auth.roles(), principal, ctx, false) || !checkRoles(auth.anyRole(), principal, ctx, true) || checkExpression(auth, principal, ctx)) {
+        if (!checkRoles(auth.roles(), principal, ctx, false) || !checkRoles(auth.anyRole(), principal, ctx, true) || !checkExpression(auth, principal, ctx)) {
             throw new WebApplicationException(unauthorizedHandler.buildResponse("prefix", "realm")); // TODO remove literals
         }
     }

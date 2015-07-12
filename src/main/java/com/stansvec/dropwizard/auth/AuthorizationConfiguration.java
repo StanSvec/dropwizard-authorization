@@ -55,11 +55,7 @@ public class AuthorizationConfiguration<T, U> extends AbstractBinder implements 
                         .addAll(Arrays.asList(resInfo.getResourceMethod().getParameters()))
                         .build(), resInfo);
 
-        if (auth == null) {
-            if ((authPolicy == AuthPolicy.PROTECT_ALL) && !containsNoAuth(resInfo)) {
-                throw exc("Unprotected resource method found. Either allow unprotected methods with AuthPolicy.PROTECT_ANNOTATED_ONLY or use @NoAuth annotation", resInfo);
-            }
-        } else {
+        if (auth != null) {
             if (!Auth.NO_EXP.equals(auth.check())) { // TODO
                 throw exc("Expression engine must be set to use expression in @Auth annotation. Check method supportExpressions(..) on AuthorizationConfiguration.Builder", resInfo);
             }
@@ -68,9 +64,10 @@ public class AuthorizationConfiguration<T, U> extends AbstractBinder implements 
         }
     }
 
-    private static Auth resolveAuthAnnotation(List<AnnotatedElement> elements, ResourceInfo resInfo) {
+    private Auth resolveAuthAnnotation(List<AnnotatedElement> elements, ResourceInfo resInfo) {
         Auth auth = null;
         boolean ignore = false;
+        boolean onParam = false;
         for (AnnotatedElement e : elements) {
             if (e.isAnnotationPresent(Auth.class)) {
                 if (ignore) {
@@ -83,14 +80,13 @@ public class AuthorizationConfiguration<T, U> extends AbstractBinder implements 
                     throw exc("Both @Auth and @NoAuth cannot be combined on same level (target)", resInfo);
                 }
                 auth = e.getAnnotation(Auth.class);
-                if (!auth.required()) {
-                    if (Parameter.class.isAssignableFrom(e.getClass())) {
-                        if (!Arrays.equals(Auth.NO_ROLE, auth.roles()) || !Arrays.equals(Auth.NO_ROLE, auth.anyRole()) || !Auth.NO_EXP.equals(auth.check())) {
-                            throw exc("When authentication is optional then authorization cannot be set", resInfo);
-                        }
-                    } else {
-                        throw exc("Optional authentication/authorization is allowed only on parameter level", resInfo);
+                if (Parameter.class.isAssignableFrom(e.getClass())) {
+                    if (!auth.required() && (!Arrays.equals(Auth.NO_ROLE, auth.roles()) || !Arrays.equals(Auth.NO_ROLE, auth.anyRole()) || !Auth.NO_EXP.equals(auth.check()))) {
+                        throw exc("When authentication is optional then authorization cannot be set", resInfo);
                     }
+                    onParam = true;
+                } else if (!auth.required()) {
+                    throw exc("Optional authentication/authorization is allowed only on parameter level", resInfo);
                 }
             }
             if (!ignore) {
@@ -98,11 +94,11 @@ public class AuthorizationConfiguration<T, U> extends AbstractBinder implements 
             }
         }
 
-        return ignore ? null : auth;
-    }
+        if (auth == null && !ignore && (authPolicy == AuthPolicy.PROTECT_ALL)) {
+            throw exc("Expression engine must be set to use expression in @Auth annotation. Check method supportExpressions(..) on AuthorizationConfiguration.Builder", resInfo);
+        }
 
-    private boolean containsNoAuth(ResourceInfo resInfo) {
-        return resInfo.getResourceMethod().isAnnotationPresent(NoAuth.class) || resInfo.getResourceClass().isAnnotationPresent(NoAuth.class);
+        return (ignore || onParam) ? null : auth;
     }
 
     private void checkRoles(Auth auth, ResourceInfo resInfo) {

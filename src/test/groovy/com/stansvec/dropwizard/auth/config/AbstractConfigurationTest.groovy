@@ -4,7 +4,6 @@ import com.stansvec.dropwizard.auth.*
 import com.stansvec.dropwizard.auth.roles.Admin
 import io.dropwizard.testing.junit.ResourceTestRule
 import org.glassfish.jersey.test.TestProperties
-import org.glassfish.jersey.test.grizzly.GrizzlyTestContainerFactory
 import org.junit.Rule
 import org.junit.rules.RuleChain
 import spock.lang.Specification
@@ -20,14 +19,12 @@ abstract class AbstractConfigurationTest extends Specification {
 
     ResourceTestRule ruleAll = ResourceTestRule
             .builder()
-            .setTestContainerFactory(new GrizzlyTestContainerFactory())
             .addResource(resource())
             .addProvider(catcherAll)
             .build();
 
     ResourceTestRule ruleAnnotated = ResourceTestRule
             .builder()
-            .setTestContainerFactory(new GrizzlyTestContainerFactory())
             .addResource(resource())
             .addProvider(catcherAnnotated)
             .build();

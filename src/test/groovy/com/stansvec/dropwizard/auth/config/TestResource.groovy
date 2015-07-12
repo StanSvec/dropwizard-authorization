@@ -1,4 +1,4 @@
-package com.stansvec.dropwizard.auth;
+package com.stansvec.dropwizard.auth.config;
 
 import javax.ws.rs.Path;
 

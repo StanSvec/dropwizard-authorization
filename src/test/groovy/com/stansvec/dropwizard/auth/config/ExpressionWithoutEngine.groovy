@@ -1,7 +1,6 @@
 package com.stansvec.dropwizard.auth.config
 
 import com.stansvec.dropwizard.auth.Auth
-import com.stansvec.dropwizard.auth.TestResource
 
 import javax.ws.rs.GET
 

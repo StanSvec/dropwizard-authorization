@@ -8,10 +8,10 @@ import javax.ws.rs.container.ContainerRequestContext
 /**
  * Test role.
  */
-class Admin implements Role<TestUser> {
+class Editor implements Role<TestUser> {
 
     @Override
     public boolean hasRole(TestUser user, ContainerRequestContext ctx) {
-        return user.hasRole(TestUser.Role.ADMIN)
+        return user.hasRole(TestUser.Role.EDITOR)
     }
 }
