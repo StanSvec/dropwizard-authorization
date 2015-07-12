@@ -95,7 +95,7 @@ public class AuthorizationConfiguration<T, U> extends AbstractBinder implements 
         }
 
         if (auth == null && !ignore && (authPolicy == AuthPolicy.PROTECT_ALL)) {
-            throw exc("Expression engine must be set to use expression in @Auth annotation. Check method supportExpressions(..) on AuthorizationConfiguration.Builder", resInfo);
+            throw exc("Unprotected resource method found. Either allow unprotected methods with AuthPolicy.PROTECT_ANNOTATED_ONLY or use @NoAuth annotation", resInfo);
         }
 
         return (ignore || onParam) ? null : auth;

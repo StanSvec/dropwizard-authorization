@@ -29,7 +29,7 @@ class ProtectedMethodsResource {
 
     @GET
     @Path("/editor-or-guest")
-    void EditorOrGuest(@Auth(anyRole = [Editor.class, Guest.class]) TestUser user) {}
+    void editorOrGuest(@Auth(anyRole = [Editor.class, Guest.class]) TestUser user) {}
 
     @GET
     @Path("/unprotected")
