@@ -3,6 +3,8 @@ package com.stansvec.dropwizard.auth;
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.MutableClassToInstanceMap;
+import com.google.common.reflect.Invokable;
+import com.google.common.reflect.Parameter;
 import io.dropwizard.auth.AuthFactory;
 import io.dropwizard.auth.DefaultUnauthorizedHandler;
 import io.dropwizard.auth.UnauthorizedHandler;
@@ -18,7 +20,6 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.ext.Provider;
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,8 +53,9 @@ public class AuthorizationConfiguration<T, U> extends AbstractBinder implements 
                 ImmutableList.<AnnotatedElement>builder()
                         .add(resInfo.getResourceClass())
                         .add(resInfo.getResourceMethod())
-                        .addAll(Arrays.asList(resInfo.getResourceMethod().getParameters()))
-                        .build(), resInfo);
+                        .addAll(Invokable.from(resInfo.getResourceMethod()).getParameters())
+                        .build(),
+                resInfo);
 
         if (auth != null) {
             if (!Auth.NO_EXP.equals(auth.check())) { // TODO

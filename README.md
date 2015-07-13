@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/StanSvec/dropwizard-authorization.svg?branch=master)](https://travis-ci.org/StanSvec/dropwizard-authorization)
+
 dropwizard-authorization
 ===================
 
