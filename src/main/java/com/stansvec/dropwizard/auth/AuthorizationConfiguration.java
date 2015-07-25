@@ -31,14 +31,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Provider
 public class AuthorizationConfiguration<T, U> extends AbstractBinder implements DynamicFeature {
 
-    private final AuthPolicy authPolicy;
+    private final ProtectionPolicy protectionPolicy;
 
     private final AuthorizationFactory<T, U> authorizationFactory;
 
     private final Authorization<? super U> authorization;
 
-    public AuthorizationConfiguration(AuthPolicy authPolicy, AuthorizationFactory<T, U> authFactory, Authorization<? super U> authorization) {
-        this.authPolicy = authPolicy;
+    public AuthorizationConfiguration(ProtectionPolicy protectionPolicy, AuthorizationFactory<T, U> authFactory, Authorization<? super U> authorization) {
+        this.protectionPolicy = protectionPolicy;
         this.authorization = authorization;
         this.authorizationFactory = authFactory;
     }
@@ -96,8 +96,8 @@ public class AuthorizationConfiguration<T, U> extends AbstractBinder implements 
             }
         }
 
-        if (auth == null && !ignore && (authPolicy == AuthPolicy.PROTECT_ALL)) {
-            throw exc("Unprotected resource method found. Either allow unprotected methods with AuthPolicy.PROTECT_ANNOTATED_ONLY or use @NoAuth annotation", resInfo);
+        if (auth == null && !ignore && (protectionPolicy == ProtectionPolicy.PROTECT_ALL)) {
+            throw exc("Unprotected resource method found. Either allow unprotected methods with ProtectionPolicy.PROTECT_ANNOTATED_ONLY or use @NoAuth annotation", resInfo);
         }
 
         return (ignore || onParam) ? null : auth;
@@ -130,15 +130,15 @@ public class AuthorizationConfiguration<T, U> extends AbstractBinder implements 
 
     public static class Builder<U> {
 
-        private AuthPolicy authPolicy;
+        private ProtectionPolicy protectionPolicy;
 
         private ClassToInstanceMap<Role<U>> roles = MutableClassToInstanceMap.create();
 
         private UnauthorizedHandler unauthorizedHandler = new DefaultUnauthorizedHandler();
 
-        public InterBuilder setAuthPolicy(AuthPolicy authPolicy) {
-            checkNotNull(authPolicy);
-            this.authPolicy = authPolicy;
+        public InterBuilder setPolicy(ProtectionPolicy protectionPolicy) {
+            checkNotNull(protectionPolicy);
+            this.protectionPolicy = protectionPolicy;
             return new InterBuilder();
         }
 
@@ -171,7 +171,7 @@ public class AuthorizationConfiguration<T, U> extends AbstractBinder implements 
 
             public AuthorizationConfiguration<T, U> build() {
                 Authorization<U> auth = new Authorization<>(roles, unauthorizedHandler);
-                return new AuthorizationConfiguration<>(authPolicy, new AuthorizationFactory<>(authFactory, auth), auth);
+                return new AuthorizationConfiguration<>(protectionPolicy, new AuthorizationFactory<>(authFactory, auth), auth);
             }
         }
     }

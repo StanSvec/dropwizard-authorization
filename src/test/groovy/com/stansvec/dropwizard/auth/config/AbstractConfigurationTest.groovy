@@ -13,9 +13,9 @@ import spock.lang.Specification
  */
 abstract class AbstractConfigurationTest extends Specification {
 
-    ExceptionCatcher catcherAll = new ExceptionCatcher(createConfiguration(AuthPolicy.PROTECT_ALL))
+    ExceptionCatcher catcherAll = new ExceptionCatcher(createConfiguration(ProtectionPolicy.PROTECT_ALL))
 
-    ExceptionCatcher catcherAnnotated = new ExceptionCatcher(createConfiguration(AuthPolicy.PROTECT_ANNOTATED_ONLY))
+    ExceptionCatcher catcherAnnotated = new ExceptionCatcher(createConfiguration(ProtectionPolicy.PROTECT_ANNOTATED_ONLY))
 
     ResourceTestRule ruleAll = ResourceTestRule
             .builder()
@@ -35,9 +35,9 @@ abstract class AbstractConfigurationTest extends Specification {
             .around(new SetPortRule(TestProperties.DEFAULT_CONTAINER_PORT + 1))
             .around(ruleAnnotated);
 
-    static AuthorizationConfiguration createConfiguration(AuthPolicy authPolicy) {
+    static AuthorizationConfiguration createConfiguration(ProtectionPolicy authPolicy) {
         return new AuthorizationConfiguration.Builder<TestUser>()
-                .setAuthPolicy(authPolicy)
+                .setPolicy(authPolicy)
                 .addRole(new Admin())
                 .setAuthentication(TestAuthenticator.AUTH_FACT)
                 .build();

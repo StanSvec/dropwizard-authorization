@@ -63,7 +63,7 @@ public class ProtectedTypeResource {
 ```
 ```java
 /**
- * {@link Auth} annotation is used on method or parameter level to protect resource methods differently.
+ * {@link Auth} annotation is used on method or parameter level to used different protection for resource methods.
  */
 @Path("/protectedMethods")
 public class ProtectedMethodsResource {
@@ -82,7 +82,7 @@ public class ProtectedMethodsResource {
 ```
 
 ### @NoAuth annotation
-This annotation is used for specifying unprotected resources. It can be used on type (class) and method level. When used on method level then the resource method is excluded from authentication and authorization defined by `@Auth` annotation on type level and thus makes the resource method unprotected. Another use case is related to `AuthPolicy#PROTECT_ALL` policy. When this policy is set then @NoAuth annotation can still be used both on type and method level to specify unprotected resources.
+This annotation is used for specifying unprotected resources. It can be used on type (class) and method level. When used on method level then the resource method is excluded from authentication and authorization defined by `@Auth` annotation on type level and thus makes the resource method unprotected. Another use case is related to `AuthPolicy#PROTECT_ALL` policy. When this policy is set then `@NoAuth` annotation can still be used both on type and method level to specify unprotected resources.
 
 `@NoAuth` usage examples:
 ```java
@@ -105,3 +105,21 @@ public class ProtectedTypeWithUnprotectedMethodResource {
     }
 }
 ```
+
+### Configuration and Dropwizard integeration
+Before using this extension protection policy, custom roles and authentication must be set using `AuthorizationConfiguration.Builder` class. Dropwizard-authentication module is used for authentication.
+```java
+AuthorizationConfiguration.Builder<Principal> authConfig = new AuthorizationConfiguration.Builder<>()
+                .setPolicy(ProtectionPolicy.PROTECT_ANNOTATED_ONLY)
+                .addRole(new Admin())
+                .addRole(new SuperUser())
+                .addRole(new Editor())
+                .addRole(new Guest())
+                .setAuthentication(new BasicAuthFactory<>(new TestAuthenticator(), "realm", Principal.class))
+                .build();
+environment.jersey().register(authConfig);
+```
+### Protection policy
+There are two protection policies available:
+* `ProtectionPolicy.PROTECT_ANNOTATED_ONLY`: Behaves in the same manner as default Dropwizard behaviour. Only resources annotated with `@Auth` annotation are protected.
+* `ProtectionPolicy.PROTECT_ALL`: All resources must be protected. If unprotected resource is found then `InvalidAuthorizationConfigurationException` is thrown on Dropwizard startup. However `@NoAuth` annotation can still be used for making some of the resources unprotected. The main purpose of this policy is to ensure that no resource remains unprotected by mistake.

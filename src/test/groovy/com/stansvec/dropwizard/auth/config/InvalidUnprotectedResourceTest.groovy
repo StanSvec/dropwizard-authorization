@@ -1,13 +1,13 @@
 package com.stansvec.dropwizard.auth.config
 
 import com.stansvec.dropwizard.auth.Auth
-import com.stansvec.dropwizard.auth.AuthPolicy
+import com.stansvec.dropwizard.auth.ProtectionPolicy
 
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 
 /**
- * Check exception when {@link AuthPolicy#PROTECT_ALL} and method unprotected.
+ * Check exception when {@link ProtectionPolicy#PROTECT_ALL} and method unprotected.
  */
 class InvalidUnprotectedResourceTest extends AbstractConfigurationTest {
 

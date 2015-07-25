@@ -29,7 +29,7 @@ class AuthorizationTest extends Specification {
             .addResource(new ProtectedTypeResource())
             .addResource(new ProtectedMethodsResource())
             .addResource(new UnprotectedTypeResource())
-            .addProvider(createConfiguration(AuthPolicy.PROTECT_ALL))
+            .addProvider(createConfiguration(ProtectionPolicy.PROTECT_ALL))
             .build();
 
     ResourceTestRule ruleAnnotated = ResourceTestRule
@@ -39,7 +39,7 @@ class AuthorizationTest extends Specification {
             .addResource(new ProtectedAndUnannotatedMethodsResource())
             .addResource(new UnprotectedTypeResource())
             .addResource(new UnannotatedTypeResource())
-            .addProvider(createConfiguration(AuthPolicy.PROTECT_ANNOTATED_ONLY))
+            .addProvider(createConfiguration(ProtectionPolicy.PROTECT_ANNOTATED_ONLY))
             .build();
     @Rule
     RuleChain ruleChain = RuleChain
@@ -48,9 +48,9 @@ class AuthorizationTest extends Specification {
             .around(new SetPortRule(TestProperties.DEFAULT_CONTAINER_PORT + 1))
             .around(ruleAnnotated);
 
-    static AuthorizationConfiguration createConfiguration(AuthPolicy authPolicy) {
+    static AuthorizationConfiguration createConfiguration(ProtectionPolicy authPolicy) {
         return new AuthorizationConfiguration.Builder<TestUser>()
-                .setAuthPolicy(authPolicy)
+                .setPolicy(authPolicy)
                 .addRole(new Admin())
                 .addRole(new SuperUser())
                 .addRole(new Editor())
