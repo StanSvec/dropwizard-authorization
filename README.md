@@ -109,7 +109,7 @@ public class ProtectedTypeWithUnprotectedMethodResource {
 ### Configuration and Dropwizard integeration
 Before using this extension protection policy, custom roles and authentication must be set using `AuthorizationConfiguration.Builder` class. Dropwizard-authentication module is used for authentication.
 ```java
-AuthorizationConfiguration.Builder<Principal> authConfig = new AuthorizationConfiguration.Builder<>()
+AuthorizationConfiguration authConfig = new AuthorizationConfiguration.Builder<Principal>()
                 .setPolicy(ProtectionPolicy.PROTECT_ANNOTATED_ONLY)
                 .addRole(new Admin())
                 .addRole(new SuperUser())

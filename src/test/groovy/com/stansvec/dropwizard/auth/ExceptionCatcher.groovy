@@ -9,11 +9,11 @@ import javax.ws.rs.core.FeatureContext
  */
 class ExceptionCatcher implements DynamicFeature {
 
-    final AuthorizationConfiguration<?, ?> authConfig
+    final AuthorizationConfiguration authConfig
 
     InvalidAuthorizationConfigurationException exception
 
-    ExceptionCatcher(AuthorizationConfiguration<?, ?> authConfig) {
+    ExceptionCatcher(AuthorizationConfiguration authConfig) {
         this.authConfig = authConfig
     }
 
