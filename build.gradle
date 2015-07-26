@@ -11,7 +11,7 @@ repositories {
     mavenCentral()
 }
 
-/*configurations {
+configurations {
     provided
     provided.extendsFrom(compile)
 }
@@ -20,12 +20,12 @@ sourceSets {
     main.compileClasspath += configurations.provided
     test.compileClasspath += configurations.provided
     test.runtimeClasspath += configurations.provided
-}*/
+}
 
 dependencies {
     //compile group: 'org.mvel', name: 'mvel2', version:'2.1.4.Final'
-    compile group: 'io.dropwizard', name: 'dropwizard-core', version: '0.8.2'
-    compile group: 'io.dropwizard', name: 'dropwizard-auth', version: '0.8.2'
+    provided group: 'io.dropwizard', name: 'dropwizard-core', version: '0.8.2'
+    provided group: 'io.dropwizard', name: 'dropwizard-auth', version: '0.8.2'
     testCompile group:'org.codehaus.groovy', name:'groovy-all', version:'2.4.3'
     testCompile group:'org.spockframework', name:'spock-core', version:'1.0-groovy-2.4'
     testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: '0.8.2'
@@ -35,13 +35,13 @@ dependencies {
     }
 }
 
-/*apply plugin: 'idea'
+apply plugin: 'idea'
 
 idea {
-  module {
-    scopes.PROVIDED.plus += [project.configurations.provided]
-  }
-}*/
+    module {
+        scopes.PROVIDED.plus += [project.configurations.provided]
+    }
+}
 
 apply plugin: 'maven-publish'
 
@@ -53,8 +53,8 @@ task sourceJar(type: Jar) {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            group = 'com.stansvec'
-            version = '0.2-SNAPSHOT'
+            groupId = 'com.stansvec'
+            version = '0.1.1'
             from components.java
             artifact sourceJar {
                 classifier 'sources'

@@ -2,6 +2,9 @@
 
 ## Authorization for Dropwizard 0.8.x
 
+```
+For Dropwizard 0.8.x use 0.1.1 version.
+```
 
 This extension uses custom `@Auth` annotation for principal authentication and authorization. There are several options how to define authorization rules:
 * By defining roles. A principal needs to have roles specified by `@Auth` annotation elements to be granted access a resource.
@@ -35,7 +38,7 @@ public class Roles {
 `@Auth` annotation is used for protecting resources. Unlike Dropwizard `@Auth` annotation this annotation supports defining roles and expressions for authorization purposes. The annotation can be used on type (class), method or parameter level.
 
 Annotation elements:
-* `required`: The element has same semantics as `requried` element in Dropwizard `@Auth` annotation. If set to false then authentication is optional, no other annotation elements can be set (authorization is forbidden) and the annotation can be used on parameter level only.
+* `required`: The element has same semantics as `required` element in Dropwizard `@Auth` annotation. If set to false then authentication is optional, no other annotation elements can be set (authorization is forbidden) and the annotation can be used on parameter level only.
 * `roles`: Defines role(s) required for a principal to access a resource.
 * `anyRoles`: Define any roles required for a principal to access a resource.
 * `check`: Contains boolean expression which needs to be evaluated as true to allow a principal access a resource.
@@ -106,7 +109,7 @@ public class ProtectedTypeWithUnprotectedMethodResource {
 }
 ```
 
-### Configuration and Dropwizard integeration
+### Configuration and Dropwizard integration
 Before using this extension protection policy, custom roles and authentication must be set using `AuthorizationConfiguration.Builder` class. Dropwizard-authentication module is used for authentication.
 ```java
 AuthorizationConfiguration authConfig = new AuthorizationConfiguration.Builder<Principal>()
