@@ -23,7 +23,6 @@ sourceSets {
 }
 
 dependencies {
-    //compile group: 'org.mvel', name: 'mvel2', version:'2.1.4.Final'
     provided group: 'io.dropwizard', name: 'dropwizard-core', version: '0.8.2'
     provided group: 'io.dropwizard', name: 'dropwizard-auth', version: '0.8.2'
     testCompile group:'org.codehaus.groovy', name:'groovy-all', version:'2.4.3'
@@ -54,7 +53,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = 'com.stansvec'
-            version = '0.1.1'
+            version = '0.1.3-SNAPSHOT'
             from components.java
             artifact sourceJar {
                 classifier 'sources'

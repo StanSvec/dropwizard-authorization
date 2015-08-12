@@ -85,7 +85,7 @@ public class ProtectedMethodsResource {
 ```
 
 ### @NoAuth annotation
-This annotation is used for specifying unprotected resources. It can be used on type (class) and method level. When used on method level then the resource method is excluded from authentication and authorization defined by `@Auth` annotation on type level and thus makes the resource method unprotected. Another use case is related to `AuthPolicy#PROTECT_ALL` policy. When this policy is set then `@NoAuth` annotation can still be used both on type and method level to specify unprotected resources.
+This annotation is used for specifying unprotected resources. It can be used on type (class) and method level. When used on method level then the resource method is excluded from authentication and authorization defined by `@Auth` annotation on type level and thus makes the resource method unprotected. Another use case is related to `ProtectionPolicy#PROTECT_ALL` policy. When this policy is set then `@NoAuth` annotation can still be used both on type and method level to specify unprotected resources.
 
 `@NoAuth` usage examples:
 ```java

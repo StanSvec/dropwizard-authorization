@@ -2,13 +2,16 @@ package com.stansvec.dropwizard.auth;
 
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ImmutableClassToInstanceMap;
+import com.stansvec.dropwizard.auth.exp.ExpressionEngine;
 import io.dropwizard.auth.UnauthorizedHandler;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 
 /**
- * Created by turtles on 21/06/15.
+ * Authorizes principal.
+ *
+ * @author Stan Svec
  */
 public class Authorization<P> {
 
@@ -16,9 +19,12 @@ public class Authorization<P> {
 
     private final UnauthorizedHandler unauthorizedHandler;
 
-    public Authorization(ClassToInstanceMap<Role<P>> roles, UnauthorizedHandler unauthorizedHandler) {
+    private final ExpressionEngine<? super P> expressionEngine;
+
+    public Authorization(ClassToInstanceMap<Role<P>> roles, UnauthorizedHandler unauthorizedHandler, ExpressionEngine<? super P> expressionEngine) {
         this.allRoles = ImmutableClassToInstanceMap.<Role<P>>builder().put(NullRole.class, new NullRole<>()).putAll(roles).build();
         this.unauthorizedHandler = unauthorizedHandler;
+        this.expressionEngine = expressionEngine;
     }
 
     public boolean containRole(Class<? extends Role> role) {
@@ -48,6 +54,6 @@ public class Authorization<P> {
     }
 
     private boolean checkExpression(Auth auth, P principal, ContainerRequestContext ctx) {
-        return true; // TODO
+        return expressionEngine.evaluate(auth.check(), principal, ctx);
     }
 }

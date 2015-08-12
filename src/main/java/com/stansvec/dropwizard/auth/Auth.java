@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER})
 public @interface Auth {
 
-    String NO_EXP = "";
+    String NO_EXP = "true";
 
     @SuppressWarnings("unchecked")
     Class<? extends Role>[] NO_ROLE = new Class[]{NullRole.class};

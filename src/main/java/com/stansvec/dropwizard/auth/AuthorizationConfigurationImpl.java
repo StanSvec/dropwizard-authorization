@@ -1,8 +1,10 @@
 package com.stansvec.dropwizard.auth;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
 import com.google.common.reflect.Parameter;
+import com.stansvec.dropwizard.auth.exp.ExpressionEngine;
 import org.glassfish.hk2.api.InjectionResolver;
 import org.glassfish.hk2.api.TypeLiteral;
 import org.glassfish.jersey.server.spi.internal.ValueFactoryProvider;
@@ -28,10 +30,16 @@ class AuthorizationConfigurationImpl<T, U> extends AuthorizationConfiguration {
 
     private final Authorization<? super U> authorization;
 
-    public AuthorizationConfigurationImpl(ProtectionPolicy protectionPolicy, AuthorizationFactory<T, U> authFactory, Authorization<? super U> authorization) {
+    private final ExpressionEngine<? super U> expressionEngine;
+
+    public AuthorizationConfigurationImpl(ProtectionPolicy protectionPolicy,
+                                          AuthorizationFactory<T, U> authFactory,
+                                          Authorization<? super U> authorization,
+                                          ExpressionEngine<? super U> expressionEngine) {
         this.protectionPolicy = protectionPolicy;
         this.authorization = authorization;
         this.authorizationFactory = authFactory;
+        this.expressionEngine = expressionEngine;
     }
 
     @Override
@@ -49,11 +57,10 @@ class AuthorizationConfigurationImpl<T, U> extends AuthorizationConfiguration {
                 resInfo);
 
         if (auth != null) {
-            if (!Auth.NO_EXP.equals(auth.check())) { // TODO
-                throw exc("Expression engine must be set to use expression in @Auth annotation. Check method supportExpressions(..) on AuthorizationConfiguration.Builder", resInfo);
-            }
             checkRoles(auth, resInfo);
+            checkExpression(auth, resInfo);
             context.register(new AuthorizationFilter(authorizationFactory, auth));
+            expressionEngine.registerExpression(auth.check());
         }
     }
 
@@ -104,6 +111,12 @@ class AuthorizationConfigurationImpl<T, U> extends AuthorizationConfiguration {
             if (!authorization.containRole(role)) {
                 throw exc("@Auth annotation contains unregistered role: " + role, resInfo);
             }
+        }
+    }
+
+    private void checkExpression(Auth auth, ResourceInfo resInfo) {
+        if (!Auth.NO_EXP.equals(auth.check()) && (expressionEngine == ExpressionEngine.NULL)) {
+            throw exc("An expression engine must be set to use expression in @Auth annotation. Check method supportExpressions(..) on AuthorizationConfiguration.Builder", resInfo);
         }
     }
 

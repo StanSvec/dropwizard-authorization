@@ -2,6 +2,7 @@ package com.stansvec.dropwizard.auth;
 
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.MutableClassToInstanceMap;
+import com.stansvec.dropwizard.auth.exp.ExpressionEngine;
 import io.dropwizard.auth.AuthFactory;
 import io.dropwizard.auth.DefaultUnauthorizedHandler;
 import io.dropwizard.auth.UnauthorizedHandler;
@@ -25,6 +26,8 @@ public abstract class AuthorizationConfiguration extends AbstractBinder implemen
 
         private UnauthorizedHandler unauthorizedHandler = new DefaultUnauthorizedHandler();
 
+        private ExpressionEngine<? super U> expressionEngine = ExpressionEngine.NULL;
+
         public InterBuilder setPolicy(ProtectionPolicy protectionPolicy) {
             checkNotNull(protectionPolicy);
             this.protectionPolicy = protectionPolicy;
@@ -45,6 +48,12 @@ public abstract class AuthorizationConfiguration extends AbstractBinder implemen
                 return this;
             }
 
+            public InterBuilder supportExpressions(ExpressionEngine<? super U> expEngine) {
+                checkNotNull(expressionEngine);
+                expressionEngine = expEngine;
+                return this;
+            }
+
             public <T> FinalBuilder<T> setAuthentication(AuthFactory<T, U> authorizationFactory) {
                 return new FinalBuilder<>(authorizationFactory);
             }
@@ -59,8 +68,8 @@ public abstract class AuthorizationConfiguration extends AbstractBinder implemen
             }
 
             public AuthorizationConfiguration build() {
-                Authorization<U> auth = new Authorization<>(roles, unauthorizedHandler);
-                return new AuthorizationConfigurationImpl<>(protectionPolicy, new AuthorizationFactory<>(authFactory, auth), auth);
+                Authorization<U> auth = new Authorization<>(roles, unauthorizedHandler, expressionEngine);
+                return new AuthorizationConfigurationImpl<>(protectionPolicy, new AuthorizationFactory<>(authFactory, auth), auth, expressionEngine);
             }
         }
     }
