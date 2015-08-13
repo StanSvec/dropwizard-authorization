@@ -19,8 +19,7 @@ public class AuthorizationFactoryProvider<C, P> extends AbstractValueFactoryProv
     private final AuthorizationFactory<C, P> factory;
 
     @Inject
-    public AuthorizationFactoryProvider(
-            final MultivaluedParameterExtractorProvider extractorProvider, final AuthorizationFactory<C, P> factory, final ServiceLocator injector) {
+    public AuthorizationFactoryProvider(MultivaluedParameterExtractorProvider extractorProvider, AuthorizationFactory<C, P> factory, ServiceLocator injector) {
         super(extractorProvider, injector, Parameter.Source.UNKNOWN);
         this.factory = factory;
     }
