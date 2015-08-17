@@ -52,6 +52,8 @@ class AuthorizationWithEntityTest extends Specification {
         "/entity/principalInjected"     | TestUser.GUEST       | UNAUTHORIZED   | "Unauthorized"
         "/entity/principalNotInjected"  | TestUser.ADMIN       | OK             | "{\"result\" : \"value1,value2\"}"
         "/entity/principalNotInjected"  | TestUser.GUEST       | UNAUTHORIZED   | "Unauthorized"
+        "/entity/injectedOptional"      | TestUser.ADMIN       | OK             | "{\"user\" : \"admin\"}"
+        "/entity/injectedOptional"      | null                 | OK             | "{\"user\" : \"null\"}"
     }
 
     Response getResponse(ResourceTestRule resources, String resource, TestUser user) {

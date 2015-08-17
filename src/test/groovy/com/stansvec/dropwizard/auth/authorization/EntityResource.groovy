@@ -13,6 +13,7 @@ import javax.ws.rs.Path
 import javax.ws.rs.Produces
 
 import static com.stansvec.dropwizard.auth.TestUser.ADMIN
+import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertThat
 
 /**
@@ -29,6 +30,14 @@ class EntityResource {
     String authOnParameter(@Principal TestUser user, CustomEntity entity) {
         assertThat(user.name, CoreMatchers.is(ADMIN.name))
         return String.format("{\"result\" : \"%s,%s\"}", entity.field1, entity.field2)
+    }
+
+    @POST
+    @Path("/injectedOptional")
+    @Auth(required = false)
+    String optional(@Principal TestUser user, CustomEntity entity) {
+        assertNotNull(entity)
+        return String.format("{\"user\" : \"%s\"}", user?.name)
     }
 
     @POST
