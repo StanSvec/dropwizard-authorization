@@ -1,3 +1,10 @@
+/*
+ * This code is licensed under "The MIT License"
+ * Copyright (c) 2015 by Stan Svec
+ *
+ * Please see the included 'LICENSE.txt' file for the full text of the license.
+ */
+
 package com.stansvec.dropwizard.auth.authorization
 
 import com.stansvec.dropwizard.auth.Auth
@@ -10,7 +17,7 @@ import org.hamcrest.CoreMatchers
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 
-import static com.stansvec.dropwizard.auth.TestUser.getADMIN
+import static com.stansvec.dropwizard.auth.TestUser.ADMIN
 import static org.junit.Assert.assertThat
 
 /**
