@@ -1,5 +1,7 @@
 package com.stansvec.dropwizard.auth;
 
+import io.dropwizard.auth.AuthFactory;
+
 import javax.annotation.Priority;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -16,25 +18,32 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Created by turtles on 21/06/15.
+ * Filter performing authentication and authorization. If the principal is granted to access the resource then the principal instance is set into request context.
+ *
+ * @author Stan Svec
  */
 @Priority(Priorities.AUTHENTICATION)
-public class AuthorizationFilter implements ContainerRequestFilter {
+public class AuthFilter<P> implements ContainerRequestFilter {
 
-    private final AuthorizationFactory<?, ?> authorizationFactory;
+    private final AuthFactory<?, ? extends P> authFactory;
+
+    private final Authorization<? super P> authorization;
 
     private final Auth auth;
 
-    public AuthorizationFilter(AuthorizationFactory<?, ?> authorizationFactory, Auth auth) {
-        this.authorizationFactory = authorizationFactory;
+    public AuthFilter(AuthFactory<?, ? extends P> authFactory, Authorization<? super P> authorization, Auth auth) {
+        this.authFactory = authFactory;
+        this.authorization = authorization;
         this.auth = auth;
     }
 
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
-        AuthorizationFactory<?, ?> authFact = authorizationFactory.clone(auth, requestContext);
-        authFact.setRequest(new FakeHttpServletRequest(requestContext));
-        authFact.provide();
+    public void filter(ContainerRequestContext ctx) throws IOException {
+        AuthFactory<?, ? extends P> authFact = authFactory.clone(auth.required());
+        authFact.setRequest(new FakeHttpServletRequest(ctx));
+        P principal = authFact.provide();
+        authorization.authorize(auth, principal, ctx);
+        ctx.setProperty(PrincipalId.VALUE, principal);
     }
 
     private static class FakeHttpServletRequest implements HttpServletRequest {

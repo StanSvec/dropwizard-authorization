@@ -2,6 +2,7 @@ package com.stansvec.dropwizard.auth.authorization
 
 import com.stansvec.dropwizard.auth.Auth
 import com.stansvec.dropwizard.auth.NoAuth
+import com.stansvec.dropwizard.auth.Principal
 import com.stansvec.dropwizard.auth.TestUser
 import com.stansvec.dropwizard.auth.roles.Admin
 import com.stansvec.dropwizard.auth.roles.Editor
@@ -10,6 +11,8 @@ import com.stansvec.dropwizard.auth.roles.SuperUser
 
 import javax.ws.rs.GET
 import javax.ws.rs.Path
+
+import static org.junit.Assert.assertTrue
 
 /**
  * Protected by annotation on methods or parameter + unprotected by {@link NoAuth} on method.
@@ -29,7 +32,10 @@ class ProtectedMethodsResource {
 
     @GET
     @Path("/editor-or-guest")
-    void editorOrGuest(@Auth(anyRole = [Editor.class, Guest.class]) TestUser user) {}
+    @Auth(anyRole = [Editor.class, Guest.class])
+    void editorOrGuest(@Principal TestUser user) {
+        assertTrue(user.hasRole(TestUser.Role.EDITOR) || user.hasRole(TestUser.Role.GUEST))
+    }
 
     @GET
     @Path("/unprotected")

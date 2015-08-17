@@ -6,11 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used for annotating unprotected resources.
+ * This annotation is used for injection of principal instance into resource method.
  *
  * @author Stan Svec
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface NoAuth {
+@Target(ElementType.PARAMETER)
+public @interface Principal {
 }

@@ -3,7 +3,9 @@ package com.stansvec.dropwizard.auth;
 import javax.ws.rs.container.ContainerRequestContext;
 
 /**
- * Created by turtles on 21/06/15.
+ * Defines authorization role.
+ *
+ * @author Stan Svec
  */
 public interface Role<P> {
 

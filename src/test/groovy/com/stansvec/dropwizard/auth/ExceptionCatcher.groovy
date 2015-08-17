@@ -5,15 +5,15 @@ import javax.ws.rs.container.ResourceInfo
 import javax.ws.rs.core.FeatureContext
 
 /**
- * Catching {@link InvalidAuthorizationConfigurationException} thrown during authorization configuration checking.
+ * Catching {@link InvalidAuthConfigException} thrown during authorization configuration checking.
  */
 class ExceptionCatcher implements DynamicFeature {
 
-    final AuthorizationConfiguration authConfig
+    final AuthConfiguration authConfig
 
-    InvalidAuthorizationConfigurationException exception
+    InvalidAuthConfigException exception
 
-    ExceptionCatcher(AuthorizationConfiguration authConfig) {
+    ExceptionCatcher(AuthConfiguration authConfig) {
         this.authConfig = authConfig
     }
 
@@ -21,7 +21,7 @@ class ExceptionCatcher implements DynamicFeature {
     void configure(ResourceInfo resourceInfo, FeatureContext context) {
         try {
             authConfig.configure(resourceInfo, context)
-        } catch (InvalidAuthorizationConfigurationException e) {
+        } catch (InvalidAuthConfigException e) {
             exception = e
         }
     }

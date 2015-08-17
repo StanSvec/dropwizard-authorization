@@ -1,15 +1,14 @@
 package com.stansvec.dropwizard.auth.config
 
 import com.stansvec.dropwizard.auth.Auth
-import com.stansvec.dropwizard.auth.TestUser
 
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 
 /**
- * Check exception when auth is optional and authorization is used.
+ * Check exception when auth is optional on type level and no principal injection is used.
  */
-class InvalidOptionalAuthParamTest3 extends AbstractConfigurationTest {
+class InvalidOptionalOnTypeNoInjectionTest extends AbstractConfigurationTest {
 
     @Override
     Object resource() {
@@ -27,7 +26,8 @@ class InvalidOptionalAuthParamTest3 extends AbstractConfigurationTest {
     }
 
     @Path("/")
+    @Auth(required = false)
     static class InvalidResource {
-        @GET public void method(@Auth(required = false, check = "expression") TestUser user) {}
+        @GET public void method() {}
     }
 }

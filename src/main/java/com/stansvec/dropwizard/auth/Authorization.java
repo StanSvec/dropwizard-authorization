@@ -17,14 +17,14 @@ public class Authorization<P> {
 
     private final ClassToInstanceMap<Role<P>> allRoles;
 
-    private final UnauthorizedHandler unauthorizedHandler;
-
     private final ExpressionEngine<? super P> expressionEngine;
 
-    public Authorization(ClassToInstanceMap<Role<P>> roles, UnauthorizedHandler unauthorizedHandler, ExpressionEngine<? super P> expressionEngine) {
+    private final UnauthorizedHandler unauthorizedHandler;
+
+    public Authorization(ClassToInstanceMap<Role<P>> roles, ExpressionEngine<? super P> expressionEngine, UnauthorizedHandler unauthorizedHandler) {
         this.allRoles = ImmutableClassToInstanceMap.<Role<P>>builder().put(NullRole.class, new NullRole<>()).putAll(roles).build();
-        this.unauthorizedHandler = unauthorizedHandler;
         this.expressionEngine = expressionEngine;
+        this.unauthorizedHandler = unauthorizedHandler;
     }
 
     public boolean containRole(Class<? extends Role> role) {
@@ -32,9 +32,13 @@ public class Authorization<P> {
     }
 
     public void authorize(Auth auth, P principal, ContainerRequestContext ctx) {
-        if (!checkRoles(auth.roles(), principal, ctx, false) || !checkRoles(auth.anyRole(), principal, ctx, true) || !checkExpression(auth, principal, ctx)) {
+        if (!isPrincipalAuthorized(auth, principal, ctx)) {
             throw new WebApplicationException(unauthorizedHandler.buildResponse("prefix", "realm")); // TODO remove literals
         }
+    }
+
+    private boolean isPrincipalAuthorized(Auth auth, P principal, ContainerRequestContext ctx) {
+        return checkRoles(auth.roles(), principal, ctx, false) && checkRoles(auth.anyRole(), principal, ctx, true) && checkExpression(auth, principal, ctx);
     }
 
     private boolean checkRoles(Class<? extends Role>[] roles, P principal, ContainerRequestContext ctx, boolean any) {

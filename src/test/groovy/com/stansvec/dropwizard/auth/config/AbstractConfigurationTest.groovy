@@ -35,8 +35,8 @@ abstract class AbstractConfigurationTest extends Specification {
             .around(new SetPortRule(TestProperties.DEFAULT_CONTAINER_PORT + 1))
             .around(ruleAnnotated);
 
-    static AuthorizationConfiguration createConfiguration(ProtectionPolicy authPolicy) {
-        return new AuthorizationConfiguration.Builder<TestUser>()
+    static AuthConfiguration createConfiguration(ProtectionPolicy authPolicy) {
+        return new AuthConfiguration.Builder<TestUser>()
                 .setPolicy(authPolicy)
                 .addRole(new Admin())
                 .setAuthentication(TestAuthenticator.AUTH_FACT)
@@ -56,6 +56,6 @@ abstract class AbstractConfigurationTest extends Specification {
     }
 
     boolean success(ExceptionCatcher catcher, boolean expect) {
-        expect ? (catcher.exception != null && InvalidAuthorizationConfigurationException.class.equals(catcher.exception.class)) : (catcher.exception == null)
+        expect ? (catcher.exception != null && InvalidAuthConfigException.class.equals(catcher.exception.class)) : (catcher.exception == null)
     }
 }

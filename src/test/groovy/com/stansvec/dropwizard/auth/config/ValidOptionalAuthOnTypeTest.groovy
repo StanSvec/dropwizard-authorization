@@ -1,34 +1,35 @@
 package com.stansvec.dropwizard.auth.config
 
 import com.stansvec.dropwizard.auth.Auth
+import com.stansvec.dropwizard.auth.Principal
 import com.stansvec.dropwizard.auth.TestUser
 
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 
 /**
- * Check exception when {@link Auth} on both type and param level.
+ * Check no exception when auth is optional and principal injection is used.
  */
-class MultiAuthTypeParamTest extends AbstractConfigurationTest {
+class ValidOptionalAuthOnTypeTest extends AbstractConfigurationTest {
 
     @Override
     Object resource() {
-        return new InvalidResource()
+        return new ValidResource()
     }
 
     @Override
     boolean expectExceptionOnProtectAnnotated() {
-        return true
+        return false
     }
 
     @Override
     boolean expectExceptionOnProtectAll() {
-        return true
+        return false
     }
 
     @Path("/")
-    @Auth
-    static class InvalidResource {
-        @GET public void method(@Auth TestUser user) {}
+    @Auth(required = false)
+    static class ValidResource {
+        @GET public void method(@Principal TestUser user) {}
     }
 }

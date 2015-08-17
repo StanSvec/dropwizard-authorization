@@ -1,6 +1,6 @@
 package com.stansvec.dropwizard.auth.authorization
 
-import com.stansvec.dropwizard.auth.AuthorizationConfiguration
+import com.stansvec.dropwizard.auth.AuthConfiguration
 import com.stansvec.dropwizard.auth.ProtectionPolicy
 import com.stansvec.dropwizard.auth.TestAuthenticator
 import com.stansvec.dropwizard.auth.TestUser
@@ -32,8 +32,8 @@ class AuthorizationWithEntityTest extends Specification {
             .addProvider(createConfiguration())
             .build();
 
-    static AuthorizationConfiguration createConfiguration() {
-        return new AuthorizationConfiguration.Builder<TestUser>()
+    static AuthConfiguration createConfiguration() {
+        return new AuthConfiguration.Builder<TestUser>()
                 .setPolicy(ProtectionPolicy.PROTECT_ANNOTATED_ONLY)
                 .addRole(new Admin())
                 .setAuthentication(TestAuthenticator.AUTH_FACT)
@@ -47,11 +47,11 @@ class AuthorizationWithEntityTest extends Specification {
         response.readEntity(String.class).contains(result)
 
         where:
-        resource                    | user                 | status         | result
-        "/entity/parameter/admin"   | TestUser.ADMIN       | OK             | "{\"result\" : \"value1,value2\"}"
-        "/entity/parameter/admin"   | TestUser.GUEST       | UNAUTHORIZED   | "Unauthorized"
-        "/entity/method/admin"      | TestUser.ADMIN       | OK             | "{\"result\" : \"value1,value2\"}"
-        "/entity/method/admin"      | TestUser.GUEST       | UNAUTHORIZED   | "Unauthorized"
+        resource                        | user                 | status         | result
+        "/entity/principalInjected"     | TestUser.ADMIN       | OK             | "{\"result\" : \"value1,value2\"}"
+        "/entity/principalInjected"     | TestUser.GUEST       | UNAUTHORIZED   | "Unauthorized"
+        "/entity/principalNotInjected"  | TestUser.ADMIN       | OK             | "{\"result\" : \"value1,value2\"}"
+        "/entity/principalNotInjected"  | TestUser.GUEST       | UNAUTHORIZED   | "Unauthorized"
     }
 
     Response getResponse(ResourceTestRule resources, String resource, TestUser user) {

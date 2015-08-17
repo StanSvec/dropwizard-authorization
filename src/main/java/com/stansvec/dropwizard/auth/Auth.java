@@ -6,13 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used to inject authenticated principal objects into protected JAX-RS resource
- * methods when expression check is evaluated to true.
+ * This annotation is used to specify authentication requirement for accessing the resources.
+ * Optionally the authorization rules can be set.
  *
  * @author Stan Svec
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER})
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Auth {
 
     String NO_EXP = "true";

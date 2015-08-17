@@ -48,8 +48,8 @@ class AuthorizationTest extends Specification {
             .around(new SetPortRule(TestProperties.DEFAULT_CONTAINER_PORT + 1))
             .around(ruleAnnotated);
 
-    static AuthorizationConfiguration createConfiguration(ProtectionPolicy authPolicy) {
-        return new AuthorizationConfiguration.Builder<TestUser>()
+    static AuthConfiguration createConfiguration(ProtectionPolicy authPolicy) {
+        return new AuthConfiguration.Builder<TestUser>()
                 .setPolicy(authPolicy)
                 .addRole(new Admin())
                 .addRole(new SuperUser())
@@ -69,6 +69,9 @@ class AuthorizationTest extends Specification {
         "/protectedType/admin"                              | TestUser.ADMIN                | NO_CONTENT
         "/protectedType/admin"                              | null                          | UNAUTHORIZED
         "/protectedType/admin"                              | TestUser.EDITOR               | UNAUTHORIZED
+        "/protectedType/admin/injected"                     | TestUser.ADMIN                | NO_CONTENT
+        "/protectedType/admin/injected"                     | TestUser.EDITOR               | UNAUTHORIZED
+        "/protectedType/admin/injected"                     | null                          | UNAUTHORIZED
         "/protectedType/unprotected"                        | TestUser.EDITOR               | NO_CONTENT
         "/protectedType/unprotected"                        | null                          | NO_CONTENT
         "/protectedMethods/admin-and-editor"                | TestUser.ADMIN_EDITOR         | NO_CONTENT

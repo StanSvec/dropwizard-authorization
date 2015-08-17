@@ -13,10 +13,12 @@ import javax.ws.rs.container.DynamicFeature;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Created by turtles on 20/06/15.
+ * Defines single type for both {@link AbstractBinder} and {@link DynamicFeature} which is used for registration of authorization configuration.
+ * Contains builder class for building {@link AuthConfiguration} instance.
+ *
+ * @author Stan Svec
  */
-
-public abstract class AuthorizationConfiguration extends AbstractBinder implements DynamicFeature {
+public abstract class AuthConfiguration extends AbstractBinder implements DynamicFeature {
 
     public static class Builder<U> {
 
@@ -24,9 +26,9 @@ public abstract class AuthorizationConfiguration extends AbstractBinder implemen
 
         private ClassToInstanceMap<Role<U>> roles = MutableClassToInstanceMap.create();
 
-        private UnauthorizedHandler unauthorizedHandler = new DefaultUnauthorizedHandler();
-
         private ExpressionEngine<? super U> expressionEngine = ExpressionEngine.NULL;
+
+        private UnauthorizedHandler unauthorizedHandler = new DefaultUnauthorizedHandler();
 
         public InterBuilder setPolicy(ProtectionPolicy protectionPolicy) {
             checkNotNull(protectionPolicy);
@@ -42,20 +44,21 @@ public abstract class AuthorizationConfiguration extends AbstractBinder implemen
                 return this;
             }
 
-            public InterBuilder setUnauthorizedHandler(UnauthorizedHandler unAuthHandler) {
-                checkNotNull(unAuthHandler);
-                unauthorizedHandler = unAuthHandler;
-                return this;
-            }
-
             public InterBuilder supportExpressions(ExpressionEngine<? super U> expEngine) {
                 checkNotNull(expressionEngine);
                 expressionEngine = expEngine;
                 return this;
             }
 
-            public <T> FinalBuilder<T> setAuthentication(AuthFactory<T, U> authorizationFactory) {
-                return new FinalBuilder<>(authorizationFactory);
+            public InterBuilder setUnauthorizedHandler(UnauthorizedHandler unAuthHandler) {
+                checkNotNull(unAuthHandler);
+                unauthorizedHandler = unAuthHandler;
+                return this;
+            }
+
+            public <T> FinalBuilder<T> setAuthentication(AuthFactory<T, U> authFactory) {
+                checkNotNull(authFactory);
+                return new FinalBuilder<>(authFactory);
             }
         }
 
@@ -63,13 +66,13 @@ public abstract class AuthorizationConfiguration extends AbstractBinder implemen
 
             private AuthFactory<T, U> authFactory;
 
-            public FinalBuilder(AuthFactory<T, U> authFactory) {
+            FinalBuilder(AuthFactory<T, U> authFactory) {
                 this.authFactory = authFactory;
             }
 
-            public AuthorizationConfiguration build() {
-                Authorization<U> auth = new Authorization<>(roles, unauthorizedHandler, expressionEngine);
-                return new AuthorizationConfigurationImpl<>(protectionPolicy, new AuthorizationFactory<>(authFactory, auth), auth, expressionEngine);
+            public AuthConfiguration build() {
+                Authorization<U> authorization = new Authorization<>(roles, expressionEngine, unauthorizedHandler);
+                return new AuthConfigurationImpl<>(protectionPolicy, authFactory, authorization, expressionEngine);
             }
         }
     }

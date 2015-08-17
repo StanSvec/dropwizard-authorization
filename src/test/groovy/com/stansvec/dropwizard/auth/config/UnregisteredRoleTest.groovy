@@ -7,7 +7,7 @@ import javax.ws.rs.GET
 import javax.ws.rs.Path
 
 /**
- * Check exception when unregistered role is used.
+ * Check exception when not registered role is used.
  */
 class UnregisteredRoleTest extends AbstractConfigurationTest {
 

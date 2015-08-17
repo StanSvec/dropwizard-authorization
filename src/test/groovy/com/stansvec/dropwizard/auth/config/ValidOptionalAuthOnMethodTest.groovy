@@ -1,19 +1,24 @@
 package com.stansvec.dropwizard.auth.config
 
 import com.stansvec.dropwizard.auth.Auth
+import com.stansvec.dropwizard.auth.Principal
 import com.stansvec.dropwizard.auth.TestUser
 
 import javax.ws.rs.GET
 
 /**
- * Check no exception when auth is optional on param level.
+ * Check no exception when auth is optional and principal injection is used.
  */
-class ValidOptionalAuthParamTest extends AbstractConfigurationTest {
+class ValidOptionalAuthOnMethodTest extends AbstractConfigurationTest {
 
     @Override
     Object resource() {
+
         return new TestResource() {
-            @GET public void method(@Auth(required = false) TestUser user) {}
+
+            @GET
+            @Auth(required = false)
+            public void method(@Principal TestUser user) {}
         }
     }
 

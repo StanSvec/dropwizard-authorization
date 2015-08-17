@@ -1,19 +1,18 @@
 package com.stansvec.dropwizard.auth.config
 
 import com.stansvec.dropwizard.auth.Auth
-import com.stansvec.dropwizard.auth.TestUser
 
 import javax.ws.rs.GET
 
 /**
- * Check exception when {@link Auth} on both method and param level.
+ * Check exception when auth is optional on method level and no principal injection is used.
  */
-class MultiAuthMethodParamTest extends AbstractConfigurationTest {
+class InvalidOptionalOnMethodNoInjectionTest extends AbstractConfigurationTest {
 
     @Override
     Object resource() {
         return new TestResource() {
-            @GET @Auth public void method(@Auth TestUser user) {}
+            @GET @Auth(required = false) public void method() {}
         }
     }
 
