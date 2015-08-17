@@ -8,6 +8,8 @@
 package com.stansvec.dropwizard.auth;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
+import com.google.common.reflect.Parameter;
 import com.stansvec.dropwizard.auth.exp.ExpressionEngine;
 import io.dropwizard.auth.AuthFactory;
 import org.glassfish.hk2.api.InjectionResolver;
@@ -21,7 +23,6 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.ext.Provider;
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,7 +64,7 @@ class AuthConfigurationImpl<P> extends AuthConfiguration {
 
         Auth auth = resolveAuthAnnotation(
                 ImmutableList.<AnnotatedElement>of(resInfo.getResourceClass(), resInfo.getResourceMethod()),
-                resInfo.getResourceMethod().getParameters(),
+                Invokable.from(resInfo.getResourceMethod()).getParameters(),
                 resInfo);
 
         if (auth != null) {
@@ -74,7 +75,7 @@ class AuthConfigurationImpl<P> extends AuthConfiguration {
         }
     }
 
-    private Auth resolveAuthAnnotation(List<AnnotatedElement> elements, Parameter[] params, ResourceInfo resInfo) {
+    private Auth resolveAuthAnnotation(List<AnnotatedElement> elements, List<Parameter> params, ResourceInfo resInfo) {
         Auth auth = null;
         boolean ignore = false;
         for (AnnotatedElement e : elements) {
