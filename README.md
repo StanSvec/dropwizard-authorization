@@ -3,7 +3,7 @@
 ## Authorization for Dropwizard 0.8.x
 
 ```
-For Dropwizard 0.8.x use 0.1.4 version.
+For Dropwizard 0.8.x use 0.1.4 version from jCenter.
 ```
 
 This extension uses custom `@Auth` annotation for principal authentication and authorization. There are several options how to define authorization rules:
@@ -33,6 +33,9 @@ public class Roles {
     }
 }
 ```
+
+### Using expressions
+You need to implement `ExpressionEngine` interface or use [MVEL Expression Engine](https://github.com/StanSvec/dropwizard-authorization-mvel).
 
 ### @Auth annotation
 `@Auth` annotation is used for protecting resources. Unlike Dropwizard `@Auth` annotation this annotation supports defining roles and expressions for authorization purposes. The annotation can be used on type (class) or method.
@@ -123,12 +126,13 @@ public class ProtectedTypeWithUnprotectedMethodResource {
 ### Configuration and Dropwizard integration
 For using this extension protection policy, custom roles and authentication must be set with `AuthorizationConfiguration.Builder` class. Dropwizard-authentication module is used for the authentication.
 ```java
-AuthorizationConfiguration authConfig = new AuthorizationConfiguration.Builder<Principal>()
+AuthConfiguration authConfig = new AuthConfiguration.Builder<Principal>()
                 .setPolicy(ProtectionPolicy.PROTECT_ANNOTATED_ONLY)
                 .addRole(new Admin())
                 .addRole(new SuperUser())
                 .addRole(new Editor())
                 .addRole(new Guest())
+                .supportExpressions(expressionEngine) // <- optional, only if you want to use expressions in @Auth#check()
                 .setAuthentication(new BasicAuthFactory<>(new TestAuthenticator(), "realm", Principal.class))
                 .build();
 environment.jersey().register(authConfig);
