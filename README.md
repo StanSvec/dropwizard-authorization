@@ -1,9 +1,10 @@
 [![Build Status](https://travis-ci.org/StanSvec/dropwizard-authorization.svg?branch=master)](https://travis-ci.org/StanSvec/dropwizard-authorization)
 
-## Authorization for Dropwizard 0.8.x
+## Authorization for Dropwizard
 
 ```
-For Dropwizard 0.8.x use 0.1.4 version from jCenter.
+For Dropwizard 0.8.x use 0.1.4 version from jCenter:
+group: 'com.stansvec', name: 'dropwizard-authorization', version: '0.1.4'
 ```
 
 This extension uses custom `@Auth` annotation for principal authentication and authorization. There are several options how to define authorization rules:
@@ -99,7 +100,7 @@ public class ProtectedMethodsResource {
 ```
 
 ### @NoAuth annotation
-This annotation is used for specifying unprotected resources. It can be used on type (class) and method level. When used on method level then the resource method is excluded from authentication and authorization defined by `@Auth` annotation on type level and thus makes the resource method unprotected. Another use case is related to `ProtectionPolicy#PROTECT_ALL` policy. When this policy is set then `@NoAuth` annotation can still be used both on type and method level to specify unprotected resources.
+This annotation is used for specifying unprotected resources. It can be used on type (class) and method level. When used on method level then the resource method is excluded from authentication and authorization defined by `@Auth` annotation on type level and thus makes the resource method unprotected. Another use case is related to `ProtectionPolicy#PROTECT_ALL` policy. When this policy is set then `@NoAuth` annotation can still be used on both type and method level to specify unprotected resources.
 
 `@NoAuth` usage examples:
 ```java
@@ -124,7 +125,7 @@ public class ProtectedTypeWithUnprotectedMethodResource {
 ```
 
 ### Configuration and Dropwizard integration
-For using this extension protection policy, custom roles and authentication must be set with `AuthorizationConfiguration.Builder` class. Dropwizard-authentication module is used for the authentication.
+For using this extension protection policy, custom roles and authentication must be set with `AuthConfiguration.Builder` class. Dropwizard-authentication module is used for the authentication.
 ```java
 AuthConfiguration authConfig = new AuthConfiguration.Builder<Principal>()
                 .setPolicy(ProtectionPolicy.PROTECT_ANNOTATED_ONLY)
@@ -140,4 +141,4 @@ environment.jersey().register(authConfig);
 ### Protection policy
 There are two protection policies available:
 * `ProtectionPolicy.PROTECT_ANNOTATED_ONLY`: Behaves in the same manner as default Dropwizard behaviour. Only resources annotated with `@Auth` annotation are protected.
-* `ProtectionPolicy.PROTECT_ALL`: All resources must be protected. If unprotected resource is found then `InvalidAuthorizationConfigurationException` is thrown on Dropwizard startup. However `@NoAuth` annotation can still be used for making some of the resources unprotected. The main purpose of this policy is to ensure that no resource remains unprotected by mistake.
+* `ProtectionPolicy.PROTECT_ALL`: All resources must be protected. If unprotected resource is found then `InvalidAuthConfigException` is thrown during Dropwizard startup. However `@NoAuth` annotation can still be used for making some of the resources unprotected. The main purpose of this policy is to ensure that no resource remains unprotected by mistake.
