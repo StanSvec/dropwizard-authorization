@@ -7,7 +7,9 @@ For Dropwizard 0.8.x use 0.1.4 version from jCenter:
 group: 'com.stansvec', name: 'dropwizard-authorization', version: '0.1.4'
 ```
 
-This extension uses custom `@Auth` annotation for principal authentication and authorization. There are several options how to define authorization rules:
+This extension uses custom `@Auth` annotation for principal authentication and authorization. `@Principal` annotation can be used for principal injection. Authentication is performed by dropwizard-auth module.
+
+There are several options how to define authorization rules:
 * By defining roles. A principal needs to have roles specified by `@Auth` annotation elements to be granted access a resource.
 * By defining expressions. Expression specified by `@Auth` annotation element must be evaluated as true in order to allow a principal access a resource.
 * Roles and expressions can be combined.
@@ -36,7 +38,7 @@ public class Roles {
 ```
 
 ### Using expressions
-You need to implement `ExpressionEngine` interface or use [MVEL Expression Engine](https://github.com/StanSvec/dropwizard-authorization-mvel).
+You need to implement `ExpressionEngine` interface or use [Java EL 3.0 Expression Engine](https://github.com/StanSvec/dropwizard-authorization-el).
 
 ### @Auth annotation
 `@Auth` annotation is used for protecting resources. Unlike Dropwizard `@Auth` annotation this annotation supports defining roles and expressions for authorization purposes. The annotation can be used on type (class) or method.
@@ -125,7 +127,7 @@ public class ProtectedTypeWithUnprotectedMethodResource {
 ```
 
 ### Configuration and Dropwizard integration
-For using this extension protection policy, custom roles and authentication must be set with `AuthConfiguration.Builder` class. Dropwizard-authentication module is used for the authentication.
+For using this extension - protection policy, roles and authentication must be set with `AuthConfiguration.Builder` class. You need to add instances of all roles used in `@Auth` annotations in registered resources otherwise `InvalidAuthConfigException` is thrown on Dropwizard startup. Dropwizard-authentication module is used for the authentication. You don't need to register Dropwizard's `AuthFactory.binder` or anything else.
 ```java
 AuthConfiguration authConfig = new AuthConfiguration.Builder<Principal>()
                 .setPolicy(ProtectionPolicy.PROTECT_ANNOTATED_ONLY)
